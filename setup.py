@@ -8,4 +8,7 @@ setup(name='narcpack',
     author_email='narc-admin@amath.washington.edu',
     license='GPLv3',
     packages=find_packages(),
+    install_requires=['numpy'],
+    test_suite='nose2.collector.collector',
+    tests_require=['nose2'],
     zip_safe=False)
