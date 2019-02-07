@@ -21,51 +21,49 @@ class Cheb:
         # check if f is a callable function or list
         if callable(f):
             a,b = interval
-	    x = (np.arange(n+1)+0.5)*np.pi/(n+1)
-
-	    T = np.cos(np.outer(np.arange(n+1),x))
-	    
-	    c = (2/(n+1))*T.dot(f(np.cos(x))) # could implement as DCT instead of matrix multiply
-	    c[0] /= 2
-
+            
+            x = (np.arange(n+1)+0.5)*np.pi/(n+1)
+            
+            T = np.cos(np.outer(np.arange(n+1),x))
+            
+            c = (2/(n+1))*T@f(np.cos(x)) # could implement as DCT instead of matrix multiply
+            c[0] /= 2
+            
             self.coeffs = c
-
+            self.n = n
+            
         elif isinstance(f, (list, tuple, np.ndarray)):
             self.coeffs = np.array(f)
+            self.n = len(self.coeffs)
 
         else:
-            except ValueError:
-                print("Cheb class must be initialized on scalar function or list like object")
-
-    def get_nth_basis(n):
-        """
-        return n-th Chebyshev polynomial
+            raise ValueError("Cheb class must be initialized on scalar function or list like object")
         
-        Parameters
-        ----------
-        n : integer
-
-        Returns
-        -------
-        callable function (n-th Chebyshev polynomial)
-        """
-        return lambda x: np.cos(n*np.arccos(x))
-
+        # need j=j because of python 'late binding closures'
+        self.basis = [(lambda x, j=j: np.cos(j*np.arccos(x))) for j in range(n)]
+        
     def __add__(self, other):
         """Override the + operator"""
-        return Poly(self.coeffs+other.coeffs)
+        return Cheb(self.coeffs+other.coeffs)
 
     def __sub__(self, other):
         """Override the - operator"""
-        return Poly(self.coeffs-other.coeffs)
+        return Cheb(self.coeffs-other.coeffs)
 
     def eval(self, x):
-        """A function to evaluate the polynomial at given point or points x."""
+        """
+        A function to evaluate the polynomial at given point or points x.
+        
+        Notes
+        -----
+        There are better algorithms for evaluating Chebyshev polynomials
+        """
+        
         a = 0.0
-        for deg, coeff in enumerate(self.coeffs):
-            a += coeff*x**deg
+        for j in range(self.n):
+            a += self.coeffs[j]*self.basis[j](x)
         return(a)
 
     def deriv(self):
         """A function to return the derivative"""
-        return(Poly(self.coeffs[1:]*np.arange(1,len(self.coeffs))))
+        return None
