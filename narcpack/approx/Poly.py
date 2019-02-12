@@ -19,11 +19,15 @@ class Poly:
         return Poly(self.coeffs-other.coeffs)
 
     def eval(self, x):
-        """A function to evaluate the polynomial at given point or points x."""
-        a = 0.0
-        for deg, coeff in enumerate(self.coeffs):
-            a += coeff*x**deg
-        return(a)
+        """
+        A function to evaluate the polynomial at given point or points x.
+        Uses Horner's method for efficient evaluation.
+        """
+        b = self.coeffs[-1]
+        for a in reversed(self.coeffs[:-1]):
+            b = a + b * x
+        return(b)
+
 
     def deriv(self):
         """A function to return the derivative"""
