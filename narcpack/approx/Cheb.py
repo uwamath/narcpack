@@ -19,10 +19,10 @@ class Cheb:
         """
 
         self.interval = interval
+        a,b = interval
         
         # check if f is a callable function or list
         if callable(f):
-            a,b = interval
             
             x = (np.arange(n+1)+0.5)*np.pi/(n+1)
             
@@ -71,4 +71,17 @@ class Cheb:
 
     def deriv(self):
         """A function to return the derivative"""
-        return None
+        
+        a,b = self.interval
+
+        c = self.coeffs
+        c_ = np.zeros(self.n)
+        
+        # update coefficients
+        for j in range(self.n-3,-1,-1):
+            c_[j] = c_[j+2]+2*(j+1)*c[j+1]
+        
+        # normalize based on interval width
+        c_ *= 2/(b-a)
+        
+        return Cheb(c_,interval=self.interval,n=self.n)
