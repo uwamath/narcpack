@@ -1,6 +1,7 @@
 import numpy as np
+from .Poly import Poly
 
-class Cheb:
+class Cheb(Poly):
     """Very simple polynomial class
 
     This is an extremely simple Chebyshev polynomial class for use in approximation classes.
@@ -38,32 +39,15 @@ class Cheb:
 
         else:
             raise ValueError("Cheb class must be initialized on scalar function or list like object")
-        
+  
         # need j=j because of python 'late binding closures'
-        self.basis = [(lambda x, j=j: np.cos(j*np.arccos(x))) for j in range(n)]
-        
-    def __add__(self, other):
-        """Override the + operator"""
-        return Cheb(self.coeffs+other.coeffs)
+        # self.basis = [(lambda x, j=j: np.cos(j*np.arccos(x))) for j in range(n)]
 
-    def __sub__(self, other):
-        """Override the - operator"""
-        return Cheb(self.coeffs-other.coeffs)
-
-    def eval(self, x):
-        """
-        A function to evaluate the polynomial at given point or points x.
-        
-        Notes
-        -----
-        There are better algorithms for evaluating Chebyshev polynomials
-        """
-        
-        a = 0.0
-        for j in range(self.n):
-            a += self.coeffs[j]*self.basis[j](x)
-        return(a)
-
+        self.phi0 = lambda x : 0*x + 1.0
+        self.phi1 =  lambda x : x
+        self.alpha = lambda x : 2*x
+        self.beta =  lambda x : 0*x - 1.0
+       
     def deriv(self):
         """A function to return the derivative"""
         return None
