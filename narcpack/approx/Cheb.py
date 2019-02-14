@@ -26,9 +26,9 @@ class Cheb:
             
             x = (np.arange(n+1)+0.5)*np.pi/(n+1)
             
-            T = np.cos(np.outer(np.arange(n+1),2*(x-a)/(b-a)-1))
+            T = np.cos(np.outer(np.arange(n+1),x))
             
-            c = (2/(n+1))*T@f(np.cos(2*(x-a)/(b-a)-1)) # could implement as DCT instead of matrix multiply
+            c = (2/(n+1))*T@f(np.cos(x)*(b-a)/2+(b+a)/2) # could implement as DCT instead of matrix multiply
             c[0] /= 2
             
             self.coeffs = c
