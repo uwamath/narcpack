@@ -1,5 +1,7 @@
 class Template:
-    """Template for interpolation class """
+    """Template for interpolation class
+
+    Feel free to inheret Poly class for polynomials if useful with "class Template(Poly)"."""
 
     def __init__(self, x, y, optArg1=None, optArg2=None, optArg3=None):
         """Initialize interpolation class
