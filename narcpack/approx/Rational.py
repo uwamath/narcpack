@@ -3,7 +3,7 @@ from scipy.integrate import quad
 from numpy.polynomial import chebyshev as C
         
 
-class Rational():
+class Rational:
     """
     Approximation of a function by a rational function.
 

@@ -1,10 +1,10 @@
 import numpy as np
 
-class BSpline:
+class Bspline:
     """
     Elements of a b-spline implementation
     """
-    def fit(self, f, interval=[-1, 1], cPts = 10, deg=3):
+    def __init__(self, f, interval=[-1, 1], nControl=10, deg=3):
         """
         Invokes low-level method evaluating b-spline at specified parameters.
 
@@ -22,8 +22,10 @@ class BSpline:
         deg : integer
         Degree of spline approximator.
         """
-        nKnots = nControl + deg + 1
-        knots = np.zeros(nKnots)
+        self.nControl = nControl
+        self.deg = deg
+        self.nKnots = self.nControl + self.deg + 1
+        self.knots = np.zeros(self.nKnots)
 
         """
         End knots repeated deg-many times for differentiability.
@@ -31,26 +33,32 @@ class BSpline:
         """
         a, b = interval[0], interval[1]
         for i in range(0, deg-1):
-            knots[i] = a
-        for i in range(nKnots - deg, nKnots - 1):
-            knots[i] = b
-
-        for i in range(1, nKnots - 2 * deg):
-            knots[deg + i] = i * ((b - a) / (nKnots - 2 * deg))
+            self.knots[i] = a
+        for i in range(self.nKnots - self.deg, self.nKnots - 1):
+            self.knots[i] = b
+        for i in range(1, self.nKnots - 2 * self.deg):
+            self.knots[self.deg + i] = i * ((b - a) / (self.nKnots - 2 * self.deg))
 
         """
         Samples evenly-space control values, for now.
         """
-        fSample = np.zeros(nControl)
+        self.fSample = np.zeros(nControl)
         for i in range(0, nControl - 1):
-             fSample[i] = f(i * ((b - a) / nControl))
+             self.fSample[i] = f(i * ((b - a) / nControl))
              
-        yApprox = np.zeros(nControl)
-        for i in range(0, nControl-1):
-            yApprox[i] = onePoint(fSample, deg + i, deg, knots, cPts)
-        
+    def __call__(self, x):
+        ans = []
+        for xpoint in x:
+            if xpoint < self.knots[self.deg]:
+                ans.append(self.onePoint(self.knots[self.deg], self.deg, self.deg, self.knots, self.fSample))
+            else:
+                i = self.deg
+                while self.knots[i] <= xpoint:
+                    i += 1
+                ans.append(self.onePoint(xpoint, self.deg+i, self.deg, self.knots, self.fSample))
+        return(ans)
 
-    def onePoint(x, i, d, k, y):
+    def onePoint(self, x, i, d, k, y):
         """
         Pointwise evaluation of b-spline using deBoor's algorithm.
         Cribbed from Wikipedia.
