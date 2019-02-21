@@ -32,12 +32,11 @@ class Bspline:
         Central knots evenly spaced, for now.
         """
         a, b = interval[0], interval[1]
-        for i in range(0, deg-1):
+        for i in range(0, deg):
             self.knots[i] = a
-        for i in range(self.nKnots - self.deg, self.nKnots - 1):
+        for i in range(self.nKnots-self.deg-1, self.nKnots):
             self.knots[i] = b
-        for i in range(1, self.nKnots - 2 * self.deg):
-            self.knots[self.deg + i] = i * ((b - a) / (self.nKnots - 2 * self.deg))
+        self.knots[self.deg:self.nKnots-self.deg-1] = np.linspace(a,b,self.nKnots-2*self.deg-1)
 
         """
         Samples evenly-space control values, for now.
@@ -50,29 +49,26 @@ class Bspline:
         ans = []
         for xpoint in x:
             if xpoint < self.knots[self.deg]:
-                ans.append(self.onePoint(self.knots[self.deg], self.deg, self.deg, self.knots, self.fSample))
+                ans.append(self.onePoint(self.knots[self.deg], self.deg))
             else:
                 i = self.deg
-                while self.knots[i] <= xpoint:
+                while (self.knots[i+1] <= xpoint) & (i < self.nKnots-self.deg-3):
                     i += 1
-                ans.append(self.onePoint(xpoint, self.deg+i, self.deg, self.knots, self.fSample))
+                ans.append(self.onePoint(xpoint, i))
         return(ans)
 
-    def onePoint(self, x, i, d, k, y):
+    def onePoint(self, x, i):
         """
         Pointwise evaluation of b-spline using deBoor's algorithm.
         Cribbed from Wikipedia.
 
         'x' is the position at which to evaluate the spline.
         'i' is the nearest knot index <= x.
-        'd' is the polynomial degree.
-        'k' is are the d-padded knot positions.
-        'y' are the control points.
         """
 
-        s = [y[j + i - d] for j in range(0, d+1)]
-        for r in range(1, d+1):
-            for j in range(d, r-1, -1):
-                alpha = (x - k[j+i-d]) / (k[j+1+i-r] - k[j+i-d])
+        s = [self.fSample[j + i - self.deg] for j in range(0, self.deg+1)]
+        for r in range(1, self.deg+1):
+            for j in range(self.deg, r-1, -1):
+                alpha = (x - self.knots[j+i-self.deg]) / (self.knots[j+1+i-r] - self.knots[j+i-self.deg])
                 s[j] = (1.0 - alpha) * s[j-1] + alpha * s[j]
-        return s[d]
+        return s[self.deg]

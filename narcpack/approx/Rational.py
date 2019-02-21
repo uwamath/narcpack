@@ -107,5 +107,5 @@ class Rational:
 
 
     
-    def eval(self,x):
+    def __call__(self,x):
         return self.coeffs['num'](np.array(x)) / self.coeffs['denom'](np.array(x))

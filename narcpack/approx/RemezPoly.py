@@ -2,11 +2,10 @@ import numpy as np
 
 class RemezPoly:
     
-    def __init__(self, func, interval):
+    def __init__(self, func, interval=[-1,1], n=10):
         self.func=func;
         self.interval=interval;
         
-        deg=10
         maxIter=100
 
 
@@ -35,7 +34,6 @@ class RemezPoly:
     
         thresh=1e-32
         f=func
-        n=deg
         
         y=np.linspace(interval[0], interval[1],n+2, endpoint=True)
         xf=np.linspace(interval[0], interval[1], n*10+2, endpoint=True)
@@ -79,7 +77,7 @@ class RemezPoly:
         pfun=lambda x: np.dot(p,np.power(x,c))
         self.pfun=pfun
     
-    def eval(self,x):
+    def __call__(self,x):
         y=[]
         for j in x:
             y.append(self.pfun(j))
