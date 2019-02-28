@@ -18,7 +18,7 @@ class Poly:
         """Override the - operator"""
         return Poly(self.coeffs-other.coeffs)
 
-    def eval(self, x):
+    def __call__(self, x):
         """
         A function to evaluate the polynomial at given point or points x.
         Uses Horner's method for efficient evaluation.
