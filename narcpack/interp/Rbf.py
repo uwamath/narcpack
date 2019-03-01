@@ -5,7 +5,7 @@ class Rbf:
     Interpolation by radial basis functions.
     """
 
-    def __init__(self, x, y, function=None):
+    def __init__(self, x, y, function='multiquadric'):
         """Initialize interpolation class
 
         Parameters:
@@ -42,9 +42,7 @@ class Rbf:
             'thin_plate': lambda r: r**2 * np.log(r)
         }
 
-        if function is None:
-            self.function = functions['multiquadric']
-        elif function in functions:
+        if function in functions:
             self.function = functions[function]
         else:
             raise ValueError('Function passed to Rbf constructor is not supported.')
