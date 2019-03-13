@@ -157,7 +157,7 @@ def centered_difference(X, t):
             t_diff = t[2:] - t[:-2]
             X_diff = (X[:,2:] - X[:,:-2]) / t_diff
             forward_diff = ((-11/6 * X[:,0] + 3 * X[:,1] \
-                - 3/2 * X[:,2] + X[:,3] / 3) / t_diff[0]).reshape(X.shape[0],1)
+                - 3/2 * X[:,2] + X[:,3] / 3) / (t_diff[0]/2)).reshape(X.shape[0],1)
             backward_diff = ((11/6 * X[:,-1]-3 * X[:,-2] \
-                + 3/2 * X[:,-3]-X[:,-4]/3) / t_diff[-1]).reshape(X.shape[0],1)
+                + 3/2 * X[:,-3]-X[:,-4]/3) / (t_diff[-1]/2)).reshape(X.shape[0],1)
             return np.concatenate((forward_diff, X_diff, backward_diff), axis=1)
