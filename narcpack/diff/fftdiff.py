@@ -12,15 +12,15 @@ def fftdiff(f):
     if N%2 == 0:
         for i in range(N):
             if i < N/2:
-                k[i] = 2j*np.pi*i
+                k[i] = 1j*i
             elif i == N/2:
                 k[i] = 0.0
             else:
-                k[i] = 2j*np.pi*(i-N)
+                k[i] = 1j*(i-N)
     else:
         for i in range(N):
             if i < N/2.0:
-                k[i] = 2j*np.pi*i
+                k[i] = 1j*i
             else:
-                k[i] = 2j*np.pi*(i-N)
-    return(np.real(fft.ifft(k*fft.fft(f))/2.0/np.pi))
+                k[i] = 1j*(i-N)
+    return(np.real(fft.ifft(k*fft.fft(f))))
